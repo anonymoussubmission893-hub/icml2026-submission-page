@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SiD-DiT Tutorial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            color: #333;
+        }
+        .hero {
+            text-align: center;
+            padding: 30px 0 10px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .hero h1 {
+            font-size: 3em;
+            margin: 0.2em 0;
+            color: #000000;
+        }
+        .hero p {
+            font-size: 1.1em;
+            color: #777;
+        }
+        .button {
+            display: inline-block;
+            padding: 8px 18px;
+            margin: 5px;
+            font-size: 0.9em;
+            color: white;
+            background-color: black;
+            border-radius: 30px;
+            text-decoration: none;
+        }
+        .content {
+            max-width: 800px;
+            margin: 20px auto 40px auto;
+            padding: 0 20px;
+        }
+        .content h2 {
+            color: #000000;
+            border-left: 4px solid #000000;
+            padding-left: 10px;
+            margin-top: 24px;
+        }
+        .content pre {
+            background: #f6f6f6;
+            padding: 12px 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        .content code {
+            font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        a {
+            color: #0073e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Quick Guide for using SiD-DiT Pipelines</h1>
+        <p>Quick start guide for running distilled flow-matching T2I models.</p>
+        <a href="index.html" class="button">Back to Main Page</a>
+    </div>
+
+    <div class="content">
+        <h2>1. Installation</h2>
+        <p>
+            First clone the SiD pipelines repository from Hugging Face, then install the required Python packages:
+        </p>
+        <pre><code class="language-bash"># clone the SiD pipelines repo
+git clone [REPO_URL]/SiD_pipelines
+
+# go into the repo
+cd SiD_pipelines
+
+# install dependencies
+pip install -r requirements.txt
+
+cd ..
+        </code></pre>
+
+        <h2>2.1. Inference with SiD-DiT SANA Rectified Flow</h2>
+        <pre><code class="language-python"> import torch
+from SiD_pipelines import SiDSanaPipeline
+prompt = ["a studio portrait of an elderly woman smiling, soft window light, 85mm lens"]
+model_repo_id = "[REPO]/SiD-Flow-Sana-0.6B-512-res"
+pipe = SiDSanaPipeline.from_pretrained(model_repo_id, torch_dtype=torch_dtype)        
+generator = torch.Generator().manual_seed(42)
+
+time_scale = 1000 # for SANA Rectified Flow, 1000 for SANA TrigFlow
+num_inference_steps=4
+resolution = 512
+image = pipe(
+    prompt=prompt,
+    guidance_scale=1,
+    num_inference_steps=num_inference_steps,
+    width=resolution,
+    height=resolution,
+    generator=generator,
+    time_scale=time_scale,
+).images[0]
+        </code></pre>
+        <h2>2.2. Inference with SiD-DiT SANA Trig Flow</h2>
+        <pre><code class="language-python"> import torch
+from SiD_pipelines import  SiDSanaPipeline
+prompt = ["a studio portrait of an elderly woman smiling, soft window light, 85mm lens"]
+model_repo_id = "[REPO]/SiD-Flow-Sana-Sprint-0.6B-1024-res"
+pipe = SiDSanaPipeline.from_pretrained(model_repo_id, torch_dtype=torch_dtype)        
+generator = torch.Generator().manual_seed(42)
+
+time_scale = 1 
+num_inference_steps=4
+resolution = 1024
+image = pipe(
+    prompt=prompt,
+    guidance_scale=1,
+    num_inference_steps=num_inference_steps,
+    width=resolution,
+    height=resolution,
+    generator=generator,
+    time_scale=time_scale,
+).images[0]
+        </code></pre>
+
+        <h2>3. Inference with SiD-DiT SD3/SD3.5</h2>
+        <pre><code class="language-python">import torch
+from SiD_pipelines import SiDSD3Pipeline
+prompt = ["a studio portrait of an elderly woman smiling, soft window light, 85mm lens"]
+model_repo_id = "[REPO]/SiD-Flow-SD3.5-medium"
+pipe = SiDSD3Pipeline.from_pretrained(model_repo_id, torch_dtype=torch_dtype)        
+generator = torch.Generator().manual_seed(42)
+
+time_scale = 1000 # for SANA Rectified Flow, 1000 for SANA TrigFlow
+num_inference_steps=4
+resolution = 1024
+image = pipe(
+    prompt=prompt,
+    guidance_scale=1,
+    num_inference_steps=num_inference_steps,
+    width=resolution,
+    height=resolution,
+    generator=generator,
+    time_scale=time_scale,
+).images[0]
+    </code></pre>
+
+    <h2>4. Inference with SiD-DiT Flux</h2>
+    <pre><code class="language-python">import torch
+from SiD_pipelines import SiDFluxPipeline
+prompt = ["a studio portrait of an elderly woman smiling, soft window light, 85mm lens"]
+model_repo_id = "[REPO]/SiD-Flow-Flux-512-res"
+pipe = SiDFluxPipeline.from_pretrained(model_repo_id, torch_dtype=torch_dtype)        
+generator = torch.Generator().manual_seed(42)
+
+time_scale = 1000 # for SANA Rectified Flow, 1000 for SANA TrigFlow
+num_inference_steps=4
+resolution = 512
+image = pipe(
+    prompt=prompt,
+    guidance_scale=1,
+    num_inference_steps=num_inference_steps,
+    width=resolution,
+    height=resolution,
+    generator=generator,
+    time_scale=time_scale,
+).images[0]
+        </code></pre>
+    </div>
+</body>
+</html>
